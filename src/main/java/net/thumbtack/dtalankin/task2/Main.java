@@ -26,12 +26,9 @@ public class Main {
         List<String> secondLineArray = Arrays.asList(scanner.nextLine().split(pattern));
         String outputWord = "отсутствует";
         int maxSize = 0;
-        Boolean isContain;
 
         for (String s : firstLineArray) {
-//            if (scanner.findInLine(s) != null && s.length() > maxSize) {
-            isContain = secondLineArray.stream().anyMatch(s::equalsIgnoreCase);
-            if (isContain && s.length() > maxSize) {
+            if (secondLineArray.contains(s) && s.length() > maxSize) {
                 maxSize = s.length();
                 outputWord = s;
             }
