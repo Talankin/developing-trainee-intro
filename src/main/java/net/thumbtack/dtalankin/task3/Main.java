@@ -4,13 +4,17 @@
 
 package net.thumbtack.dtalankin.task3;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,22 +24,31 @@ public class Main {
     }
 
     public void run() throws IOException {
-        File inputFile = new File("src/main/java/net/thumbtack/dtalankin/task3/input.txt").getCanonicalFile();
-        File outputFile = new File("src/main/java/net/thumbtack/dtalankin/task3/output.txt").getCanonicalFile();
-        Scanner scanner = new Scanner(inputFile);
-        PrintWriter printWriter = new PrintWriter(outputFile);
+        File inputFile = new File("src/main/java/net/thumbtack/dtalankin/task3/input.txt");
+        File outputFile = new File("src/main/java/net/thumbtack/dtalankin/task3/output.txt");
         String pattern = "[' ']{1}";
-        Set<List<Integer>> set = new HashSet<>();
-        while (scanner.hasNextLine()) {
-            List<String> stringList = Arrays.asList(scanner.nextLine().split(pattern));
-            List<Integer> intList = stringList.stream()
-                    .map(Integer::parseInt).collect(Collectors.toList());
-            intList.sort(Integer::compareTo);
+        Map<Set<Integer>, String> map = new HashMap<>();
 
-            if (set.add(intList)) {
-                printWriter.println(stringList);
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFile))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                List<String> stringList = Arrays.asList(line.split(pattern));
+                List<Integer> intList = stringList.stream()
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toList());
+                Set<Integer> set = new HashSet<>(intList);
+                map.put(set, line);
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        printWriter.close();
+
+        try (PrintStream printStream = new PrintStream(outputFile)){
+            for (String value : map.values()) {
+                printStream.println(value);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
